@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 
 export const todoRouter = Router();
 
-// In-memory store (will be replaced with database in later steps)
+
 interface Todo {
   id: string;
   title: string;

@@ -108,30 +108,49 @@ docker run -p 8080:8080 clickup-web
 
 ## 🏗️ Deployment to Azure
 
+**Personal Azure Account:**
+- Resource Group: `mindx-intern-01-rg`
+- Location: `Southeast Asia`
+- See `commands.md` for all personal commands
+
 ### Step 1: Azure Container Registry (ACR)
 
-1. Create ACR:
+#### Option 1: Using Setup Script (Recommended)
+
+```powershell
+# Run setup script to create ACR
+.\scripts\setup-acr.ps1
+
+# Build and push images
+.\scripts\build-and-push.ps1
+```
+
+#### Option 2: Manual Setup
+
+1. Create ACR (choose a globally unique name):
 ```bash
-az acr create --resource-group <RESOURCE_GROUP> --name <ACR_NAME> --sku Basic
+az acr create --resource-group mindx-intern-01-rg --name <YOUR_ACR_NAME> --sku Basic --location southeastasia
 ```
 
 2. Login to ACR:
 ```bash
-az acr login --name <ACR_NAME>
+az acr login --name <YOUR_ACR_NAME>
 ```
 
 3. Build and push images:
 ```bash
 # Build and push API
 cd api
-docker build -t <ACR_NAME>.azurecr.io/clickup-api:latest .
-docker push <ACR_NAME>.azurecr.io/clickup-api:latest
+docker build -t <YOUR_ACR_NAME>.azurecr.io/clickup-api:latest .
+docker push <YOUR_ACR_NAME>.azurecr.io/clickup-api:latest
 
 # Build and push Web
 cd ../web
-docker build -t <ACR_NAME>.azurecr.io/clickup-web:latest .
-docker push <ACR_NAME>.azurecr.io/clickup-web:latest
+docker build -t <YOUR_ACR_NAME>.azurecr.io/clickup-web:latest .
+docker push <YOUR_ACR_NAME>.azurecr.io/clickup-web:latest
 ```
+
+**Note**: See `commands.md` for detailed commands and troubleshooting.
 
 ### Step 2: Azure Kubernetes Service (AKS)
 
@@ -214,6 +233,8 @@ Authentication will be integrated in Step 5 of the Week 1 plan:
 
 - [Backend API README](./api/README.md)
 - [Frontend Web README](./web/README.md)
+- **[Personal Commands Reference](./commands.md)** - All personal Azure/Docker commands
+- [Setup Instructions](./SETUP.md)
 - [Week 1 Tasks Guide](./docs/plans/week-1/tasks.md)
 - [Architecture Overview](./docs/plans/week-1/architecture.md)
 

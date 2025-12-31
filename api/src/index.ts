@@ -31,9 +31,9 @@ app.get('/', (req: Request, res: Response) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 ClickUp API server running on port ${PORT}`);
-  console.log(`📍 Health check: http://localhost:${PORT}/health`);
-  console.log(`📍 API endpoint: http://localhost:${PORT}/api/todos`);
+  console.log(` ClickUp API server running on port ${PORT}`);
+  console.log(` Health check: http://localhost:${PORT}/health`);
+  console.log(` API endpoint: http://localhost:${PORT}/api/todos`);
 });
 
 export default app;
