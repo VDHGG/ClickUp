@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clickup-web
+  labels:
+    app: clickup-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: clickup-web
+  template:
+    metadata:
+      labels:
+        app: clickup-web
+    spec:
+      containers:
+      - name: web
+        image: <ACR_NAME>.azurecr.io/clickup-web:latest
+        ports:
+        - containerPort: 8080
+          name: http
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+
