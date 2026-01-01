@@ -14,9 +14,11 @@ spec:
       labels:
         app: clickup-web
     spec:
+      imagePullSecrets:
+      - name: acr-secret
       containers:
       - name: web
-        image: <ACR_NAME>.azurecr.io/clickup-web:latest
+        image: clickupacr.azurecr.io/clickup-web:latest
         ports:
         - containerPort: 8080
           name: http

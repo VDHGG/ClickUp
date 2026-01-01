@@ -150,4 +150,21 @@ vite.config.ts.timestamp-*
 # OS
 .DS_Store
 Thumbs.db
+
+# Project-specific files
 commands.md
+DEPLOYMENT.md
+install-dependencies.ps1
+OPENID-FLOW.md
+OPENID-INTEGRATION.md
+OPENID-SETUP.md
+OpenID.md
+scripts/
+
+# Kubernetes secrets (may contain sensitive data)
+k8s/api-secret.yaml
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo

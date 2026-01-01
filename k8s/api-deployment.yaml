@@ -14,15 +14,44 @@ spec:
       labels:
         app: clickup-api
     spec:
+      imagePullSecrets:
+      - name: acr-secret
       containers:
       - name: api
-        image: <ACR_NAME>.azurecr.io/clickup-api:latest
+        image: clickupacr.azurecr.io/clickup-api:latest
         ports:
         - containerPort: 3000
           name: http
         env:
         - name: PORT
           value: "3000"
+        - name: NODE_ENV
+          value: "production"
+        - name: OPENID_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: clickup-api-secrets
+              key: OPENID_CLIENT_ID
+        - name: OPENID_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: clickup-api-secrets
+              key: OPENID_CLIENT_SECRET
+        - name: OPENID_REDIRECT_URI
+          valueFrom:
+            secretKeyRef:
+              name: clickup-api-secrets
+              key: OPENID_REDIRECT_URI
+        - name: SESSION_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: clickup-api-secrets
+              key: SESSION_SECRET
+        - name: FRONTEND_URL
+          valueFrom:
+            secretKeyRef:
+              name: clickup-api-secrets
+              key: FRONTEND_URL
         livenessProbe:
           httpGet:
             path: /health

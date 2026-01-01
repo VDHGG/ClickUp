@@ -3,32 +3,30 @@ kind: Ingress
 metadata:
   name: clickup-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx
   tls:
-  - hosts:
-    - <YOUR_DOMAIN>
-    secretName: clickup-tls
+    - hosts:
+        - clickup.48-218-233-16.nip.io
+      secretName: clickup-tls
   rules:
-  - host: <YOUR_DOMAIN>
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: clickup-web
-            port:
-              number: 8080
-      - path: /api
-        pathType: Prefix
-        backend:
-          service:
-            name: clickup-api
-            port:
-              number: 3000
-
+    - host: clickup.48-218-233-16.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: clickup-web
+                port:
+                  number: 8080
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: clickup-api
+                port:
+                  number: 3000

@@ -14,8 +14,7 @@ export function Login() {
   }
 
   const handleMindXIDLogin = () => {
-    // For now, just login (will be replaced with OpenID redirect later)
-    // This will redirect to https://id-dev.mindx.edu.vn in Step 5
+    // Redirect to backend auth login endpoint which will redirect to MindX ID
     login()
   }
 

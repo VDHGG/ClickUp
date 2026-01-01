@@ -4,7 +4,8 @@ import type { Todo } from '../types/todo'
 const api = axios.create({
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  withCredentials: true, // Important: include cookies for session
 })
 
 export const getTodos = async (baseUrl: string): Promise<Todo[]> => {

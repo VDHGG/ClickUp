@@ -1,6 +1,10 @@
-import { Router, Request, Response } from 'express';
+import { Router, Response } from 'express';
+import { authenticateSession, AuthenticatedRequest } from '../middleware/auth';
 
 export const todoRouter = Router();
+
+// Apply authentication middleware to all todo routes
+todoRouter.use(authenticateSession);
 
 
 interface Todo {
@@ -24,7 +28,7 @@ let todos: Todo[] = [
 ];
 
 // GET /api/todos - Get all todos
-todoRouter.get('/', (req: Request, res: Response) => {
+todoRouter.get('/', (req: AuthenticatedRequest, res: Response) => {
   res.json({
     success: true,
     data: todos,
@@ -33,7 +37,7 @@ todoRouter.get('/', (req: Request, res: Response) => {
 });
 
 // GET /api/todos/:id - Get a single todo
-todoRouter.get('/:id', (req: Request, res: Response) => {
+todoRouter.get('/:id', (req: AuthenticatedRequest, res: Response) => {
   const todo = todos.find(t => t.id === req.params.id);
   
   if (!todo) {
@@ -50,7 +54,7 @@ todoRouter.get('/:id', (req: Request, res: Response) => {
 });
 
 // POST /api/todos - Create a new todo
-todoRouter.post('/', (req: Request, res: Response) => {
+todoRouter.post('/', (req: AuthenticatedRequest, res: Response) => {
   const { title, description } = req.body;
   
   if (!title || typeof title !== 'string' || title.trim().length === 0) {
@@ -78,7 +82,7 @@ todoRouter.post('/', (req: Request, res: Response) => {
 });
 
 // PUT /api/todos/:id - Update a todo
-todoRouter.put('/:id', (req: Request, res: Response) => {
+todoRouter.put('/:id', (req: AuthenticatedRequest, res: Response) => {
   const todoIndex = todos.findIndex(t => t.id === req.params.id);
   
   if (todoIndex === -1) {
@@ -106,7 +110,7 @@ todoRouter.put('/:id', (req: Request, res: Response) => {
 });
 
 // DELETE /api/todos/:id - Delete a todo
-todoRouter.delete('/:id', (req: Request, res: Response) => {
+todoRouter.delete('/:id', (req: AuthenticatedRequest, res: Response) => {
   const todoIndex = todos.findIndex(t => t.id === req.params.id);
   
   if (todoIndex === -1) {

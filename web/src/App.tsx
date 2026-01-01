@@ -95,7 +95,19 @@ function TodoApp() {
 }
 
 function App() {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, loading } = useAuth()
+
+  // Show loading while checking auth
+  if (loading) {
+    return (
+      <div className="app">
+        <div style={{ textAlign: 'center', padding: '50px', color: 'white' }}>
+          <h2>Loading...</h2>
+          <p>Please wait...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>

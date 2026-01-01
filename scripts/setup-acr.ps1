@@ -1,9 +1,9 @@
 # ClickUp - Setup Azure Container Registry
 
 # Configuration
-$ACR_NAME = "clickupACR"  
+$ACR_NAME = "clickupacr"  
 $RESOURCE_GROUP = "mindx-intern-01-rg"
-$LOCATION = "southeastasia"
+$LOCATION = "japaneast"
 $SKU = "Basic"  
 
 Write-Host "==========================================" -ForegroundColor Cyan
