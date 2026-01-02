@@ -9,6 +9,11 @@ import { authRouter } from './routes/auth';
 dotenv.config();
 
 const app = express();
+
+// 🔥 CRITICAL: Trust proxy for NGINX Ingress on AKS
+// This allows Express to recognize HTTPS requests from NGINX
+app.set('trust proxy', 1);
+
 const PORT = process.env.PORT || 3000;
 
 // Middleware
@@ -19,15 +24,18 @@ app.use(cors({
 app.use(express.json());
 
 // Session middleware (for authentication)
+// 🔥 CRITICAL: sameSite: 'none' + secure: true is REQUIRED for cross-site OpenID redirects
+// This allows cookies to be sent when redirecting from external IdP (MindX) back to our callback
 app.use(session({
   secret: process.env.SESSION_SECRET || 'clickup-secret-key-change-in-production',
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true, // Create session immediately for login flow
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    secure: true, // 🔥 MUST be true when sameSite: 'none' (HTTPS required)
     httpOnly: true,
-    sameSite: 'lax', // CSRF protection
+    sameSite: 'none', // 🔥 REQUIRED for cross-site redirects from OpenID provider
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    // Don't set domain - let browser handle it automatically
   },
   name: 'clickup.sid', // Custom session name
 }));

@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import { getOpenIDClient } from '../config/openid';
 
 export interface AuthenticatedRequest extends Request {
   user?: {
@@ -26,9 +25,8 @@ export async function authenticateSession(
     }
 
     const user = (req as any).session.user;
-    const accessToken = (req as any).session.accessToken;
 
-    if (!user || !accessToken) {
+    if (!user) {
       res.status(401).json({
         success: false,
         message: 'Invalid session',
@@ -36,23 +34,9 @@ export async function authenticateSession(
       return;
     }
 
-    // Verify token is still valid (optional - can skip for performance)
-    try {
-      const client = await getOpenIDClient();
-      await client.userinfo(accessToken);
-    } catch (error) {
-      // Token expired or invalid - clear session
-      console.error('Token validation error:', error);
-      (req as any).session.destroy(() => {
-        res.status(401).json({
-          success: false,
-          message: 'Session expired',
-        });
-      });
-      return;
-    }
-
     // Attach user info to request
+    // Note: We trust the session since it's stored server-side with secure cookies
+    // Token validation is skipped for performance - sessions expire after 24 hours
     req.user = user;
 
     next();
