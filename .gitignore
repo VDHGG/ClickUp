@@ -159,8 +159,10 @@ OPENID-FLOW.md
 OPENID-INTEGRATION.md
 OPENID-SETUP.md
 OpenID.md
-scripts/
 WEEK2-PLAN.md
+
+# Scripts folder (may contain sensitive information like connection strings, keys)
+scripts/
 
 # Kubernetes secrets (may contain sensitive data)
 k8s/api-secret.yaml
