@@ -52,6 +52,11 @@ spec:
             secretKeyRef:
               name: clickup-api-secrets
               key: FRONTEND_URL
+        - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: clickup-api-secrets
+              key: APPLICATIONINSIGHTS_CONNECTION_STRING
         livenessProbe:
           httpGet:
             path: /health

@@ -160,11 +160,77 @@ OPENID-INTEGRATION.md
 OPENID-SETUP.md
 OpenID.md
 scripts/
+WEEK2-PLAN.md
 
 # Kubernetes secrets (may contain sensitive data)
 k8s/api-secret.yaml
+k8s/*-secret.yaml
+k8s/*secret*.yaml
+
+# Azure credentials and configuration
+.azure/
+*.publishsettings
+*.azurePubxml
+
+# Google Analytics and other API keys
+*analytics*.json
+*ga*.json
+*google*.json
+*appinsights*.json
+
+# Application Insights connection strings (if stored locally)
+*appinsights*.txt
+*connectionstring*.txt
 
 # Build outputs
 dist/
 build/
 *.tsbuildinfo
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.development
+
+# Documentation folder (contains sensitive information like Measurement IDs, Connection Strings)
+docs/
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+
+# Azure service principal files
+azure-credentials.json
+service-principal.json
+
+# Kubernetes config files with secrets
+kubeconfig
+kubeconfig.*
+*.kubeconfig
+
+# Temporary files with sensitive data
+*.tmp
+*.temp
+*_backup
+*_old
+*_bak
+
+# Logs that might contain sensitive info
+*.log
+logs/
+*.log.*
+
+# Database dumps (if any)
+*.sql
+*.dump
+*.db
+
+# Backup files
+*.backup
+*.bak
+*~

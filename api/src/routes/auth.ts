@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { getOpenIDClient, getAuthorizationUrl } from '../config/openid';
+import { trackEvent, trackException } from '../config/appinsights';
 import crypto from 'crypto';
 
 export const authRouter = Router();
@@ -81,10 +82,24 @@ authRouter.get('/login', async (req: Request, res: Response) => {
     
     console.log(`[AUTH] Redirecting to: ${authUrl.substring(0, 100)}...`);
 
+    // Track login initiation event
+    trackEvent('AuthLoginInitiated', {
+      sessionId: sessionId?.substring(0, 8) || 'unknown',
+    });
+
     // Redirect to MindX ID authorization endpoint
     res.redirect(authUrl);
   } catch (error) {
     console.error('[AUTH] Error initiating login:', error);
+    
+    // Track error
+    if (error instanceof Error) {
+      trackException(error, {
+        endpoint: '/api/auth/login',
+        action: 'login_initiation',
+      });
+    }
+    
     res.status(500).json({
       success: false,
       message: 'Failed to initiate login',
@@ -219,8 +234,10 @@ authRouter.get('/callback', async (req: Request, res: Response) => {
     if ((req as any).session) {
       (req as any).session.accessToken = tokenSet.access_token;
       (req as any).session.idToken = tokenSet.id_token;
+      // 🔥 FIX: Ensure sub is always set (use email or preferred_username as fallback)
+      const userId = userInfo.sub || userInfo.preferred_username || userInfo.email || 'unknown';
       (req as any).session.user = {
-        sub: userInfo.sub,
+        sub: userId,
         name: userInfo.name,
         email: userInfo.email,
         preferred_username: userInfo.preferred_username,
@@ -241,14 +258,37 @@ authRouter.get('/callback', async (req: Request, res: Response) => {
       });
     }
 
+    // Track successful authentication
+    // 🔥 FIX: Use fallback for userId if sub is not available
+    const userId = userInfo.sub || userInfo.preferred_username || userInfo.email || 'unknown';
+    trackEvent('AuthLoginSuccess', {
+      userId: userId,
+      email: userInfo.email || 'unknown',
+    });
+
     // Redirect to frontend dashboard (logged in)
     const frontendUrl = process.env.FRONTEND_URL || 'https://clickup.48-218-233-16.nip.io';
     console.log(`[AUTH] Authentication successful, redirecting to: ${frontendUrl}`);
     res.redirect(frontendUrl);
   } catch (error) {
     console.error('[AUTH] Error handling callback:', error);
+    
+    // Track authentication error
+    if (error instanceof Error) {
+      trackException(error, {
+        endpoint: '/api/auth/callback',
+        action: 'callback_processing',
+      });
+    }
+    
     const frontendUrl = process.env.FRONTEND_URL || 'https://clickup.48-218-233-16.nip.io';
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    
+    // Track failed authentication
+    trackEvent('AuthLoginFailed', {
+      error: errorMessage,
+    });
+    
     res.redirect(`${frontendUrl}?error=${encodeURIComponent(errorMessage)}`);
   }
 });
@@ -289,16 +329,27 @@ authRouter.get('/me', async (req: Request, res: Response) => {
 
 // POST /auth/logout - Logout
 authRouter.post('/logout', (req: Request, res: Response) => {
+  const user = (req as any).session?.user;
+  
   // Clear session
   if ((req as any).session) {
     (req as any).session.destroy((err: Error) => {
       if (err) {
         console.error('Error destroying session:', err);
+        trackException(err, {
+          endpoint: '/api/auth/logout',
+          action: 'session_destroy',
+        });
         return res.status(500).json({
           success: false,
           message: 'Error during logout',
         });
       }
+      
+      // Track logout event
+      trackEvent('AuthLogout', {
+        userId: user?.sub || 'unknown',
+      });
       
       res.json({
         success: true,
@@ -306,6 +357,10 @@ authRouter.post('/logout', (req: Request, res: Response) => {
       });
     });
   } else {
+    trackEvent('AuthLogout', {
+      userId: 'unknown',
+    });
+    
     res.json({
       success: true,
       message: 'Logged out successfully',

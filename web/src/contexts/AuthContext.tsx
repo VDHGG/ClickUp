@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { trackLogin, trackLogout } from '../config/ga4'
 
 interface User {
   sub: string
@@ -76,6 +77,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = () => {
+    // Track login initiation
+    trackLogin('MindX ID')
     // Redirect to backend auth login endpoint
     window.location.href = `${API_BASE_URL}/auth/login`
   }
@@ -86,6 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         method: 'POST',
         credentials: 'include',
       })
+      trackLogout() // Track logout event
     } catch (error) {
       console.error('Error during logout:', error)
     } finally {

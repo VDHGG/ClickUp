@@ -54,7 +54,7 @@ Set-Location ..
 Write-Host ""
 Write-Host " Building Web image..." -ForegroundColor Yellow
 Set-Location web
-docker build -t "${ACR_LOGIN_SERVER}/clickup-web:latest" .
+docker build --build-arg VITE_GA4_MEASUREMENT_ID=G-1Z3KG290SG -t "${ACR_LOGIN_SERVER}/clickup-web:latest" .
 if ($LASTEXITCODE -ne 0) {
     Write-Host " Web build failed" -ForegroundColor Red
     Set-Location ..

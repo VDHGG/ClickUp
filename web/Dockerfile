@@ -12,9 +12,11 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Build argument for API URL (default to /api for production)
+# Build arguments
 ARG VITE_API_URL=/api
+ARG VITE_GA4_MEASUREMENT_ID=G-1Z3KG290SG
 ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_GA4_MEASUREMENT_ID=$VITE_GA4_MEASUREMENT_ID
 
 # Build the application
 RUN npm run build

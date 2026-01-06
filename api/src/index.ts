@@ -2,11 +2,16 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import session from 'express-session';
+import { initializeAppInsights } from './config/appinsights';
 import { todoRouter } from './routes/todos';
 import { healthRouter } from './routes/health';
 import { authRouter } from './routes/auth';
 
 dotenv.config();
+
+// 🔥 Initialize Azure Application Insights FIRST (before any other code)
+// This ensures all telemetry is captured from the start
+initializeAppInsights();
 
 const app = express();
 
